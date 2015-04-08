@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#343535"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:drawableTop="@drawable/asy"
+        android:drawablePadding="10dp"
+        android:layout_gravity="center"
+        android:text="拍摄照片"
+        android:textSize="14sp"
+        android:textColor="#CDCECE"
+        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>
