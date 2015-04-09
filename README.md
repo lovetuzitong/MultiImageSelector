@@ -56,7 +56,7 @@ No more steps, just enjoy. :)
 
 ###Custom Activity Style
 * Custome your own Activity
-``` java
+```java
 class CustomerActivity extends Activity implements MultiImageSelectorFragment.Callback{
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,14 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 }
 ```
 * Take a glance of `MultiImageSelectorActivity.java`
+
+-------------------
+
+###Change Log
+
+* 2015-4-9
+    1. Fixed. When set `EXTRA_SHOW_CAMERA` to `true`, the first grid item onclick event were messed.
+    2. Add. Support initial selected image list.
 
 -------------------
 

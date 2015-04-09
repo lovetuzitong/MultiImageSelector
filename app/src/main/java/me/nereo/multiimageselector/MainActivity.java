@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
@@ -24,6 +25,8 @@ public class MainActivity extends ActionBarActivity {
     private TextView mResultText;
     private RadioGroup mChoiceMode, mShowCamera;
     private EditText mRequestNum;
+
+    private ArrayList<String> mSelectPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,10 @@ public class MainActivity extends ActionBarActivity {
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxNum);
                 // 选择模式
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, selectedMode);
+                // 默认选择
+                if(mSelectPath != null && mSelectPath.size()>0){
+                    intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, mSelectPath);
+                }
                 startActivityForResult(intent, REQUEST_IMAGE);
 
             }
@@ -84,9 +91,9 @@ public class MainActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_IMAGE){
             if(resultCode == RESULT_OK){
-                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                mSelectPath = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 StringBuilder sb = new StringBuilder();
-                for(String p: path){
+                for(String p: mSelectPath){
                     sb.append(p);
                     sb.append("\n");
                 }

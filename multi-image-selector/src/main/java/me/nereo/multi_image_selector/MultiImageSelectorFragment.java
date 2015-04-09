@@ -50,6 +50,8 @@ public class MultiImageSelectorFragment extends Fragment {
     public static final String EXTRA_SELECT_MODE = "select_count_mode";
     /** 是否显示相机，boolean类型 */
     public static final String EXTRA_SHOW_CAMERA = "show_camera";
+    /** 默认选择的数据集 */
+    public static final String EXTRA_DEFAULT_SELECTED_LIST = "default_result";
     /** 单选 */
     public static final int MODE_SINGLE = 0;
     /** 多选 */
@@ -113,6 +115,14 @@ public class MultiImageSelectorFragment extends Fragment {
 
         // 图片选择模式
         final int mode = getArguments().getInt(EXTRA_SELECT_MODE);
+
+        // 默认选择
+        if(mode == MODE_MULTI) {
+            ArrayList<String> tmp = getArguments().getStringArrayList(EXTRA_DEFAULT_SELECTED_LIST);
+            if(tmp != null && tmp.size()>0) {
+                resultList = tmp;
+            }
+        }
 
         // 是否显示照相机
         final boolean showCamera = getArguments().getBoolean(EXTRA_SHOW_CAMERA, true);
@@ -210,7 +220,7 @@ public class MultiImageSelectorFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(showCamera){
+                if(mImageAdapter.isShowCamera()){
                     // 如果显示照相机，则第一个Grid显示为照相机，处理特殊逻辑
                     if(i == 0){
                         showCameraAction();
@@ -413,6 +423,12 @@ public class MultiImageSelectorFragment extends Fragment {
                     }while(data.moveToNext());
 
                     mImageAdapter.setData(images);
+
+                    // 设定默认选择
+                    if(resultList != null && resultList.size()>0){
+                        mImageAdapter.setDefaultSelected(resultList);
+                    }
+
                     mFolderAdapter.setData(mResultFolder);
                     hasFolderGened = true;
 

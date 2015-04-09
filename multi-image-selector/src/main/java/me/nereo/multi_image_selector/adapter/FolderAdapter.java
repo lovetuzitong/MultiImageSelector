@@ -141,7 +141,7 @@ public class FolderAdapter extends BaseAdapter {
             // 显示图片
             Picasso.with(mContext)
                     .load(new File(data.cover.path))
-                    .error(R.drawable.default_error)
+                    .placeholder(R.drawable.default_error)
                     .resize(mImageSize, mImageSize)
                     .centerCrop()
                     .into(cover);

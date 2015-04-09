@@ -1,5 +1,5 @@
 # MultiImageSelector
-仿微信实现多图选择。支持单选和多选两张模式
+仿微信实现多图选择。支持单选和多选两种模式
 
 [English Doc](README.md)
 
@@ -18,7 +18,7 @@
 
 * 第2步
 代码中调用，例如:
-``` java
+```java
 Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
 
 // 是否显示调用相机拍照
@@ -56,7 +56,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 ###自定义显示
 * 自定义Activity
-``` java
+```java
 class CustomerActivity extends Activity implements MultiImageSelectorFragment.Callback{
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,14 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 }
 ```
 * 具体可以参考`MultiImageSelectorActivity.java`的实现
+
+-------------------
+
+###更新日志
+
+* 2015-4-9
+    1. 修复. 当设置 `EXTRA_SHOW_CAMERA` 为 `true` 时, 点击第一个Item会混乱的问题.
+    2. 新增. 支持初始化图片选择设定。
 
 -------------------
 

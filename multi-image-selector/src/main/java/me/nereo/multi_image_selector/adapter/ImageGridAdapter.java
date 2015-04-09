@@ -1,6 +1,7 @@
 package me.nereo.multi_image_selector.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,6 @@ public class ImageGridAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private boolean showCamera = true;
     private boolean showSelectIndicator = true;
-    private boolean justChangeIndicator = false;
 
     private List<Image> mImages = new ArrayList<>();
     private List<Image> mSelectedImages = new ArrayList<>();
@@ -61,6 +61,10 @@ public class ImageGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public boolean isShowCamera(){
+        return showCamera;
+    }
+
     /**
      * 选择某个图片，改变选择状态
      * @param image
@@ -71,8 +75,34 @@ public class ImageGridAdapter extends BaseAdapter {
         }else{
             mSelectedImages.add(image);
         }
-        justChangeIndicator = true;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 通过图片路径设置默认选择
+     * @param resultList
+     */
+    public void setDefaultSelected(ArrayList<String> resultList) {
+        for(String path : resultList){
+            Image image = getImageByPath(path);
+            if(image != null){
+                mSelectedImages.add(image);
+            }
+        }
+        if(mSelectedImages.size() > 0){
+            notifyDataSetChanged();
+        }
+    }
+
+    private Image getImageByPath(String path){
+        if(mImages != null && mImages.size()>0){
+            for(Image image : mImages){
+                if(image.path.equalsIgnoreCase(path)){
+                    return image;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -81,7 +111,6 @@ public class ImageGridAdapter extends BaseAdapter {
      */
     public void setData(List<Image> images) {
         mSelectedImages.clear();
-        justChangeIndicator = false;
 
         if(images != null && images.size()>0){
             mImages = images;
@@ -224,7 +253,7 @@ public class ImageGridAdapter extends BaseAdapter {
             Picasso.with(mContext)
                     .load(imageFile)
                     .placeholder(R.drawable.default_error)
-                    .error(R.drawable.default_error)
+                    //.error(R.drawable.default_error)
                     .resize(mItemSize, mItemSize)
                     .centerCrop()
                     .into(image);
