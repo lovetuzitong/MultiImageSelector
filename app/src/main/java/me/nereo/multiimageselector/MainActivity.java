@@ -84,6 +84,14 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+
+/*        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, GestureImageActivity.class);
+                startActivity(intent);
+            }
+        });*/
     }
 
     @Override

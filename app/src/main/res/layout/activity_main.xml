@@ -10,7 +10,7 @@
     <TextView
         android:focusableInTouchMode="true"
         android:focusable="true"
-        android:text="选择模式："
+        android:text="@string/select_mode"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -26,19 +26,19 @@
 
         <RadioButton
             android:id="@+id/single"
-            android:text="单选"
+            android:text="@string/mode_single"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <RadioButton
             android:id="@+id/multi"
-            android:text="多选"
+            android:text="@string/mode_multi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         </RadioGroup>
 
     <TextView
-        android:text="最大选择数量："
+        android:text="@string/max_select_amount"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -47,14 +47,14 @@
 
     <EditText
         android:id="@+id/request_num"
-        android:hint="默认数量为9"
+        android:hint="@string/hint_default_amount"
         android:enabled="false"
         android:inputType="number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="是否显示Camera："
+        android:text="@string/enable_camera"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -70,12 +70,12 @@
 
         <RadioButton
             android:id="@+id/show"
-            android:text="是"
+            android:text="@string/enable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <RadioButton
             android:id="@+id/no_show"
-            android:text="否"
+            android:text="@string/disable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -84,7 +84,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="图片选择"
+        android:text="@string/go_select"
         android:id="@+id/button"/>
 
     <ScrollView
