@@ -3,6 +3,7 @@ package me.nereo.multi_image_selector;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.ListPopupWindow;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,8 @@ import me.nereo.multi_image_selector.utils.TimeUtils;
  */
 public class MultiImageSelectorFragment extends Fragment {
 
+    private static final String TAG = "MultiImageSelector";
+
     /** 最大图片选择次数，int类型 */
     public static final String EXTRA_SELECT_COUNT = "max_select_count";
     /** 图片选择模式，int类型 */
@@ -61,6 +65,7 @@ public class MultiImageSelectorFragment extends Fragment {
     private static final int LOADER_CATEGORY = 1;
     // 请求加载系统照相机
     private static final int REQUEST_CAMERA = 100;
+
 
     // 结果数据
     private ArrayList<String> resultList = new ArrayList<>();
@@ -143,7 +148,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
         mCategoryText = (TextView) view.findViewById(R.id.category_btn);
         // 初始化，加载所有图片
-        mCategoryText.setText("所有图片");
+        mCategoryText.setText(R.string.folder_all);
         mCategoryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,7 +166,7 @@ public class MultiImageSelectorFragment extends Fragment {
         mPreviewBtn = (Button) view.findViewById(R.id.preview);
         // 初始化，按钮状态初始化
         if(resultList == null || resultList.size()<=0){
-            mPreviewBtn.setText("预览");
+            mPreviewBtn.setText(R.string.preview);
             mPreviewBtn.setEnabled(false);
         }
         mPreviewBtn.setOnClickListener(new View.OnClickListener() {
@@ -206,10 +211,20 @@ public class MultiImageSelectorFragment extends Fragment {
         mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             public void onGlobalLayout() {
-                final int numCount = mGridView.getNumColumns();
+
+                final int width = mGridView.getWidth();
+                final int height = mGridView.getHeight();
+
+                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
+                final int numCount = width / desireSize;
                 final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
-                int columnWidth = (mGridView.getWidth() - columnSpace*(numCount-1)) / numCount;
+                int columnWidth = (width - columnSpace*(numCount-1)) / numCount;
                 mImageAdapter.setItemSize(columnWidth);
+
+                if(mFolderPopupWindow == null){
+                    createPopupFolderList(width, height);
+                }
+
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
                     mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }else{
@@ -238,30 +253,26 @@ public class MultiImageSelectorFragment extends Fragment {
         });
 
         mFolderAdapter = new FolderAdapter(getActivity());
-        createPopupFolderList();
     }
 
     /**
      * 创建弹出的ListView
      */
-    private void createPopupFolderList() {
+    private void createPopupFolderList(int width, int height) {
         mFolderPopupWindow = new ListPopupWindow(getActivity());
-//        mFolderPopupWindow.getListView().setDividerHeight(1);
-//        mFolderPopupWindow.getListView().setDivider(new ColorDrawable(Color.parseColor("#CCCCCC")));
         mFolderPopupWindow.setAdapter(mFolderAdapter);
-        int sWidthPix = getResources().getDisplayMetrics().widthPixels;
-        mFolderPopupWindow.setContentWidth(sWidthPix);
-        mFolderPopupWindow.setHeight(sWidthPix);
+        mFolderPopupWindow.setContentWidth(width);
+        mFolderPopupWindow.setHeight(height * 5/8);
         mFolderPopupWindow.setAnchorView(mPopupAnchorView);
         mFolderPopupWindow.setModal(true);
         mFolderPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i == 0){
+                if (i == 0) {
                     getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
-                    mCategoryText.setText("所有照片");
+                    mCategoryText.setText(R.string.folder_all);
                     mImageAdapter.setShowCamera(true);
-                }else {
+                } else {
                     Folder folder = (Folder) adapterView.getAdapter().getItem(i);
                     if (null != folder) {
                         Bundle args = new Bundle();
@@ -303,6 +314,49 @@ public class MultiImageSelectorFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d(TAG, "on change");
+
+        final int orientation = newConfig.orientation;
+
+        if(mFolderPopupWindow != null){
+            if(mFolderPopupWindow.isShowing()){
+                mFolderPopupWindow.dismiss();
+            }
+        }
+
+        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+            public void onGlobalLayout() {
+
+                final int height = mGridView.getHeight();
+
+                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
+                Log.d(TAG, "Desire Size = "+desireSize);
+                final int numCount = mGridView.getWidth() / desireSize;
+                Log.d(TAG, "Grid Size = "+mGridView.getWidth());
+                Log.d(TAG, "num count = "+numCount);
+                final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
+                int columnWidth = (mGridView.getWidth() - columnSpace*(numCount-1)) / numCount;
+                mImageAdapter.setItemSize(columnWidth);
+
+                if(mFolderPopupWindow != null){
+                    mFolderPopupWindow.setHeight(height * 5/8);
+                }
+
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }else{
+                    mGridView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+            }
+        });
+
+        super.onConfigurationChanged(newConfig);
+
+    }
+
     /**
      * 选择相机
      */
@@ -314,7 +368,7 @@ public class MultiImageSelectorFragment extends Fragment {
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
             startActivityForResult(cameraIntent, REQUEST_CAMERA);
         }else{
-            Toast.makeText(getActivity(), "没有系统相机", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -330,10 +384,10 @@ public class MultiImageSelectorFragment extends Fragment {
                     resultList.remove(image.path);
                     if(resultList.size() != 0) {
                         mPreviewBtn.setEnabled(true);
-                        mPreviewBtn.setText("预览(" + resultList.size() + ")");
+                        mPreviewBtn.setText(getResources().getString(R.string.preview) + "(" + resultList.size() + ")");
                     }else{
                         mPreviewBtn.setEnabled(false);
-                        mPreviewBtn.setText("预览");
+                        mPreviewBtn.setText(R.string.preview);
                     }
                     if (mCallback != null) {
                         mCallback.onImageUnselected(image.path);
@@ -341,13 +395,13 @@ public class MultiImageSelectorFragment extends Fragment {
                 } else {
                     // 判断选择数量问题
                     if(mDesireImageCount == resultList.size()){
-                        Toast.makeText(getActivity(), "已经达到最高选择数量了…", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     resultList.add(image.path);
                     mPreviewBtn.setEnabled(true);
-                    mPreviewBtn.setText("预览(" + resultList.size() + ")");
+                    mPreviewBtn.setText(getResources().getString(R.string.preview) + "(" + resultList.size() + ")");
                     if (mCallback != null) {
                         mCallback.onImageSelected(image.path);
                     }
@@ -432,8 +486,6 @@ public class MultiImageSelectorFragment extends Fragment {
                     mFolderAdapter.setData(mResultFolder);
                     hasFolderGened = true;
 
-                } else {
-                    System.out.println("no image found");
                 }
             }
         }

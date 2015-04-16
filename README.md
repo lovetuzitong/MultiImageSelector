@@ -8,6 +8,10 @@ Image selector for Android device. Support single choice and multi-choice.
 
 -------------------
 
+###Run Demo
+
+>./gradlew installDebug
+
 ###Quick Start
 * Step 0
 Add module `multi-image-selector` as your dependence.
@@ -15,6 +19,11 @@ Add module `multi-image-selector` as your dependence.
 * Step 1 
 Declare  permission `android.permission.READ_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
 Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
+```xml
+<activity
+    android:configChanges="orientation|screenSize"
+    android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+```
 
 * Step 2
 Call image selector activity in your code, eg.
@@ -100,6 +109,12 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 * 2015-4-9
     1. Fixed. When set `EXTRA_SHOW_CAMERA` to `true`, the first grid item onclick event were messed.
     2. Add. Support initial selected image list.
+
+* 2015-4-16
+    1. Fixed. Crack when rotate device. (Issue by [@Leminity](https://github.com/Leminity))
+    2. Fixed. PopupListView position error. (Issue by [@Slock](https://github.com/Slock))
+    3. Change. Demo application shortcut.
+    4. Change. Readme file.
 
 -------------------
 

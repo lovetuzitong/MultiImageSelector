@@ -20,7 +20,7 @@ public class TimeUtils {
     }
 
     public static String formatPhotoDate(long time){
-        return timeFormat(time, "yyyy年MM月dd日");
+        return timeFormat(time, "yyyy-MM-dd");
     }
 
     public static String formatPhotoDate(String path){

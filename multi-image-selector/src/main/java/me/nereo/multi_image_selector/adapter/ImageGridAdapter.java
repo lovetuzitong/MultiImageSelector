@@ -174,32 +174,11 @@ public class ImageGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-/*        ViewHolde holde = null;
-
-        if(showCamera){
-            int type = getItemViewType(i);
-            if(view == null){
-
-                view = mInflater.inflate(R.layout.list_item_camera, viewGroup, false);
-            }else{
-
-            }
-        }else{
-            if(view == null){
-                view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
-                holde = new ViewHolde(view);
-            }else{
-                holde = (ViewHolde) view.getTag();
-            }
-        }
-        // 绑定数据
-        if(holde != null) {
-            holde.bindData(getItem(i));
-        }*/
 
         int type = getItemViewType(i);
         if(type == TYPE_CAMERA){
             view = mInflater.inflate(R.layout.list_item_camera, viewGroup, false);
+            view.setTag(null);
         }else if(type == TYPE_NORMAL){
             ViewHolde holde;
             if(view == null){
@@ -216,10 +195,13 @@ public class ImageGridAdapter extends BaseAdapter {
                 holde.bindData(getItem(i));
             }
         }
+
+        /** Fixed View Size */
         GridView.LayoutParams lp = (GridView.LayoutParams) view.getLayoutParams();
         if(lp.height != mItemSize){
             view.setLayoutParams(mItemLayoutParams);
         }
+
         return view;
     }
 
@@ -249,14 +231,17 @@ public class ImageGridAdapter extends BaseAdapter {
                 indicator.setVisibility(View.GONE);
             }
             File imageFile = new File(data.path);
-            // 显示图片
-            Picasso.with(mContext)
-                    .load(imageFile)
-                    .placeholder(R.drawable.default_error)
-                    //.error(R.drawable.default_error)
-                    .resize(mItemSize, mItemSize)
-                    .centerCrop()
-                    .into(image);
+
+            if(mItemSize > 0) {
+                // 显示图片
+                Picasso.with(mContext)
+                        .load(imageFile)
+                        .placeholder(R.drawable.default_error)
+                                //.error(R.drawable.default_error)
+                        .resize(mItemSize, mItemSize)
+                        .centerCrop()
+                        .into(image);
+            }
         }
     }
 

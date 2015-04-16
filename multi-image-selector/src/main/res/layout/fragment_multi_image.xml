@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,9 +11,10 @@
         android:layout_height="match_parent"
         android:horizontalSpacing="@dimen/space_size"
         android:verticalSpacing="@dimen/space_size"
-        android:paddingBottom="48dp"
+        android:paddingBottom="?android:attr/actionBarSize"
         android:clipToPadding="false"
-        android:numColumns="3"/>
+        android:numColumns="auto_fit"
+        android:columnWidth="@dimen/image_size"/>
 
     <TextView
         android:id="@+id/timeline_area"
@@ -34,7 +36,7 @@
         android:background="#cc000000"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="?android:attr/actionBarSize">
 
         <TextView
             android:id="@+id/category_btn"
@@ -44,7 +46,7 @@
             android:textColor="#CDCECE"
             tools:text="所有图片"
             android:textSize="16sp"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:drawableRight="@drawable/text_indicator"
             android:drawablePadding="5dp"
             android:layout_width="wrap_content"
