@@ -106,15 +106,21 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 
 ###更新日志
 
-* 2015-4-9
-    1. 修复. 当设置 `EXTRA_SHOW_CAMERA` 为 `true` 时, 点击第一个Item会混乱的问题.
-    2. 新增. 支持初始化图片选择设定。
+* 2015-5-5
+    1. 修复. 某些图片无法显示. (Issue by[sd6352051](https://github.com/sd6352051), [larry](https://github.com/18611480882))
+    2. 修复. `ListPopupWindow` 无法填充父控件
+    3. 新增. 选中的遮罩效果.
 
 * 2015-4-16
     1. 修复. 旋转设备时，程序会崩溃. (Issue by [@Leminity](https://github.com/Leminity))
     2. 修复. 文件夹PopupListView位置错误. (Issue by [@Slock](https://github.com/Slock))
     3. 更改. 演示程序截图.
     4. 更改. Readme 文件.
+
+* 2015-4-9
+    1. 修复. 当设置 `EXTRA_SHOW_CAMERA` 为 `true` 时, 点击第一个Item会混乱的问题.
+    2. 新增. 支持初始化图片选择设定。
+
 
 -------------------
 

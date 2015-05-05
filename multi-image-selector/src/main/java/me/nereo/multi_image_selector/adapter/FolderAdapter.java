@@ -95,7 +95,7 @@ public class FolderAdapter extends BaseAdapter {
             if(lastSelected == i){
                 holder.indicator.setVisibility(View.VISIBLE);
             }else{
-                holder.indicator.setVisibility(View.GONE);
+                holder.indicator.setVisibility(View.INVISIBLE);
             }
         }
         return view;

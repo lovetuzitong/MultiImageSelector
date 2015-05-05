@@ -208,10 +208,12 @@ public class ImageGridAdapter extends BaseAdapter {
     class ViewHolde {
         ImageView image;
         ImageView indicator;
+        View mask;
 
         ViewHolde(View view){
             image = (ImageView) view.findViewById(R.id.image);
             indicator = (ImageView) view.findViewById(R.id.checkmark);
+            mask = view.findViewById(R.id.mask);
             view.setTag(this);
         }
 
@@ -223,9 +225,11 @@ public class ImageGridAdapter extends BaseAdapter {
                 if(mSelectedImages.contains(data)){
                     // 设置选中状态
                     indicator.setImageResource(R.drawable.btn_selected);
+                    mask.setVisibility(View.VISIBLE);
                 }else{
                     // 未选择
                     indicator.setImageResource(R.drawable.btn_unselected);
+                    mask.setVisibility(View.GONE);
                 }
             }else{
                 indicator.setVisibility(View.GONE);

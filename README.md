@@ -106,15 +106,20 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 
 ###Change Log
 
-* 2015-4-9
-    1. Fixed. When set `EXTRA_SHOW_CAMERA` to `true`, the first grid item onclick event were messed.
-    2. Add. Support initial selected image list.
+* 2015-5-5
+    1. Fixed. Can't display some images. (Issue by[sd6352051](https://github.com/sd6352051), [larry](https://github.com/18611480882))
+    2. Fixed. `ListPopupWindow` can not fill parent
+    3. Added. Add checked mask.
 
 * 2015-4-16
     1. Fixed. Crack when rotate device. (Issue by [@Leminity](https://github.com/Leminity))
     2. Fixed. PopupListView position error. (Issue by [@Slock](https://github.com/Slock))
     3. Change. Demo application shortcut.
     4. Change. Readme file.
+
+* 2015-4-9
+    1. Fixed. When set `EXTRA_SHOW_CAMERA` to `true`, the first grid item onclick event were messed.
+    2. Add. Support initial selected image list.
 
 -------------------
 

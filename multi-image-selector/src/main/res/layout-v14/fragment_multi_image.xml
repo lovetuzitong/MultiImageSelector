@@ -14,7 +14,7 @@
         android:paddingBottom="?android:attr/actionBarSize"
         android:clipToPadding="false"
         android:numColumns="auto_fit"
-        android:columnWidth="@dimen/image_size"/>
+    android:columnWidth="@dimen/image_size"/>
 
     <TextView
         android:id="@+id/timeline_area"
@@ -50,6 +50,7 @@
             android:background="@null"
             android:singleLine="true"
             android:ellipsize="end"
+            android:textAllCaps="false"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 
