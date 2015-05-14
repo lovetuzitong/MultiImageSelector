@@ -299,6 +299,10 @@ public class MultiImageSelectorFragment extends Fragment {
                             if (null != folder) {
                                 mImageAdapter.setData(folder.images);
                                 mCategoryText.setText(folder.name);
+                                // 设定默认选择
+                                if (resultList != null && resultList.size() > 0) {
+                                    mImageAdapter.setDefaultSelected(resultList);
+                                }
                             }
                             mImageAdapter.setShowCamera(false);
                         }
