@@ -13,20 +13,7 @@
         android:verticalSpacing="@dimen/space_size"
         android:paddingBottom="?android:attr/actionBarSize"
         android:clipToPadding="false"
-        android:numColumns="auto_fit"
-        android:columnWidth="@dimen/image_size"/>
-
-    <TextView
-        android:id="@+id/timeline_area"
-        tools:text="2015年4月1日"
-        android:textColor="#CDCECE"
-        android:textSize="14sp"
-        android:paddingLeft="10sp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:background="#cc000000"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:numColumns="3"/>
 
     <RelativeLayout
         android:clickable="true"

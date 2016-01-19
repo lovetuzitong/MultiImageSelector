@@ -18,6 +18,7 @@
 
 * 第1步 
 在你的 `AndroidManifest.xml` 文件中添加权限 `android.permission.READ_EXTERNAL_STORAGE`.
+在你的 `AndroidManifest.xml` 文件中添加权限 `android.permission.WRITE_EXTERNAL_STORAGE`.
 别忘了同时在 `AndroidManifest.xml` 中声明 `MultiImageSelectorActivity` 这个Activity.
 ```xml
 <activity
@@ -29,16 +30,14 @@
 代码中调用，例如:
 ```java
 Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
-
 // 是否显示调用相机拍照
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
-
 // 最大图片选择数量
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
-
 // 设置模式 (支持 单选/MultiImageSelectorActivity.MODE_SINGLE 或者 多选/MultiImageSelectorActivity.MODE_MULTI)
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
-
+// 默认选择图片,回填选项(支持String ArrayList)
+intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
 startActivityForResult(intent, REQUEST_IMAGE);
 ```
 
@@ -105,6 +104,12 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 -------------------
 
 ###更新日志
+
+* 2016-1-19
+    1. 修复. 无法加载大小为0的图片
+    2. 新增. 拍照后通知媒体扫描,加入图库
+    3. 修复. 红米无法拍照问题
+    4. 优化. 拍照Item的显示
 
 * 2015-5-5
     1. 修复. 某些图片无法显示. (Issue by[sd6352051](https://github.com/sd6352051), [larry](https://github.com/18611480882))

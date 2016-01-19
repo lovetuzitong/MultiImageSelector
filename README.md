@@ -18,6 +18,7 @@ Add module `multi-image-selector` as your dependence.
 
 * Step 1 
 Declare  permission `android.permission.READ_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
+Declare  permission `android.permission.WRITE_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
 Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
 ```xml
 <activity
@@ -29,16 +30,14 @@ Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
 Call image selector activity in your code, eg.
 ``` java
 Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
-
 // whether show camera
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
-
 // max select image amount
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
-
 // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
-
+// default select images (support array list)
+intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
 startActivityForResult(intent, REQUEST_IMAGE);
 ```
 
@@ -105,6 +104,12 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 -------------------
 
 ###Change Log
+
+* 2016-1-19
+    1. Fixed. cannot load some 0-size image
+    2. Added. When take a new photo, notify media scanner
+    3. Fixed. Can't take photo on RED-MI
+    4. Fixed. Performance when show Camera-Icon
 
 * 2015-5-5
     1. Fixed. Can't display some images. (Issue by[sd6352051](https://github.com/sd6352051), [larry](https://github.com/18611480882))

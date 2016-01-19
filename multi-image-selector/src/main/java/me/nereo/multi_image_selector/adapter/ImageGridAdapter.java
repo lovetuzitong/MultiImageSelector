@@ -1,27 +1,29 @@
 package me.nereo.multi_image_selector.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.graphics.Point;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.nereo.multi_image_selector.MultiImageSelectorFragment;
 import me.nereo.multi_image_selector.R;
 import me.nereo.multi_image_selector.bean.Image;
 
 /**
  * 图片Adapter
  * Created by Nereo on 2015/4/7.
+ * Updated by nereo on 2016/1/19.
  */
 public class ImageGridAdapter extends BaseAdapter {
 
@@ -37,14 +39,22 @@ public class ImageGridAdapter extends BaseAdapter {
     private List<Image> mImages = new ArrayList<>();
     private List<Image> mSelectedImages = new ArrayList<>();
 
-    private int mItemSize;
-    private GridView.LayoutParams mItemLayoutParams;
+    final int mGridWidth;
 
-    public ImageGridAdapter(Context context, boolean showCamera){
+    public ImageGridAdapter(Context context, boolean showCamera, int column){
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.showCamera = showCamera;
-        mItemLayoutParams = new GridView.LayoutParams(GridView.LayoutParams.MATCH_PARENT, GridView.LayoutParams.MATCH_PARENT);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        int width = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            Point size = new Point();
+            wm.getDefaultDisplay().getSize(size);
+            width = size.x;
+        }else{
+            width = wm.getDefaultDisplay().getWidth();
+        }
+        mGridWidth = width / column;
     }
     /**
      * 显示选择指示器
@@ -120,23 +130,6 @@ public class ImageGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    /**
-     * 重置每个Column的Size
-     * @param columnWidth
-     */
-    public void setItemSize(int columnWidth) {
-
-        if(mItemSize == columnWidth){
-            return;
-        }
-
-        mItemSize = columnWidth;
-
-        mItemLayoutParams = new GridView.LayoutParams(mItemSize, mItemSize);
-
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getViewTypeCount() {
         return 2;
@@ -175,42 +168,34 @@ public class ImageGridAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 
-        int type = getItemViewType(i);
-        if(type == TYPE_CAMERA){
-            view = mInflater.inflate(R.layout.list_item_camera, viewGroup, false);
-            view.setTag(null);
-        }else if(type == TYPE_NORMAL){
-            ViewHolde holde;
-            if(view == null){
-                view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
-                holde = new ViewHolde(view);
-            }else{
-                holde = (ViewHolde) view.getTag();
-                if(holde == null){
-                    view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
-                    holde = new ViewHolde(view);
-                }
-            }
-            if(holde != null) {
-                holde.bindData(getItem(i));
+        if(isShowCamera()){
+            if(i == 0){
+                view = mInflater.inflate(R.layout.list_item_camera, viewGroup, false);
+                return view;
             }
         }
 
-        /** Fixed View Size */
-        GridView.LayoutParams lp = (GridView.LayoutParams) view.getLayoutParams();
-        if(lp.height != mItemSize){
-            view.setLayoutParams(mItemLayoutParams);
+        ViewHolder holder;
+        if(view == null){
+            view = mInflater.inflate(R.layout.list_item_image, viewGroup, false);
+            holder = new ViewHolder(view);
+        }else{
+            holder = (ViewHolder) view.getTag();
+        }
+
+        if(holder != null) {
+            holder.bindData(getItem(i));
         }
 
         return view;
     }
 
-    class ViewHolde {
+    class ViewHolder {
         ImageView image;
         ImageView indicator;
         View mask;
 
-        ViewHolde(View view){
+        ViewHolder(View view){
             image = (ImageView) view.findViewById(R.id.image);
             indicator = (ImageView) view.findViewById(R.id.checkmark);
             mask = view.findViewById(R.id.mask);
@@ -235,17 +220,14 @@ public class ImageGridAdapter extends BaseAdapter {
                 indicator.setVisibility(View.GONE);
             }
             File imageFile = new File(data.path);
-
-            if(mItemSize > 0) {
-                // 显示图片
-                Picasso.with(mContext)
-                        .load(imageFile)
-                        .placeholder(R.drawable.default_error)
-                                //.error(R.drawable.default_error)
-                        .resize(mItemSize, mItemSize)
-                        .centerCrop()
-                        .into(image);
-            }
+            // 显示图片
+            Picasso.with(mContext)
+                    .load(imageFile)
+                    .placeholder(R.drawable.default_error)
+                    .tag(MultiImageSelectorFragment.TAG)
+                    .resize(mGridWidth, mGridWidth)
+                    .centerCrop()
+                    .into(image);
         }
     }
 

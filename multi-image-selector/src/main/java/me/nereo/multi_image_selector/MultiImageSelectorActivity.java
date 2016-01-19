@@ -1,6 +1,7 @@
 package me.nereo.multi_image_selector;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -71,10 +72,10 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         // 完成按钮
         mSubmitButton = (Button) findViewById(R.id.commit);
         if(resultList == null || resultList.size()<=0){
-            mSubmitButton.setText("完成");
+            mSubmitButton.setText(R.string.action_done);
             mSubmitButton.setEnabled(false);
         }else{
-            mSubmitButton.setText("完成("+resultList.size()+"/"+mDefaultCount+")");
+            updateDoneText();
             mSubmitButton.setEnabled(true);
         }
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +90,11 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
                 }
             }
         });
+    }
+
+    private void updateDoneText(){
+        mSubmitButton.setText(String.format("%s(%d/%d)",
+                getString(R.string.action_done), resultList.size(), mDefaultCount));
     }
 
     @Override
@@ -107,7 +113,7 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
         }
         // 有图片之后，改变按钮状态
         if(resultList.size() > 0){
-            mSubmitButton.setText("完成("+resultList.size()+"/"+mDefaultCount+")");
+            updateDoneText();
             if(!mSubmitButton.isEnabled()){
                 mSubmitButton.setEnabled(true);
             }
@@ -118,13 +124,11 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     public void onImageUnselected(String path) {
         if(resultList.contains(path)){
             resultList.remove(path);
-            mSubmitButton.setText("完成("+resultList.size()+"/"+mDefaultCount+")");
-        }else{
-            mSubmitButton.setText("完成("+resultList.size()+"/"+mDefaultCount+")");
         }
+        updateDoneText();
         // 当为选择图片时候的状态
         if(resultList.size() == 0){
-            mSubmitButton.setText("完成");
+            mSubmitButton.setText(R.string.action_done);
             mSubmitButton.setEnabled(false);
         }
     }
@@ -132,6 +136,10 @@ public class MultiImageSelectorActivity extends FragmentActivity implements Mult
     @Override
     public void onCameraShot(File imageFile) {
         if(imageFile != null) {
+
+            // notify system
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)));
+
             Intent data = new Intent();
             resultList.add(imageFile.getAbsolutePath());
             data.putStringArrayListExtra(EXTRA_RESULT, resultList);

@@ -1,14 +1,13 @@
 package me.nereo.multi_image_selector;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -18,11 +17,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.ListPopupWindow;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -33,6 +31,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ import me.nereo.multi_image_selector.adapter.ImageGridAdapter;
 import me.nereo.multi_image_selector.bean.Folder;
 import me.nereo.multi_image_selector.bean.Image;
 import me.nereo.multi_image_selector.utils.FileUtils;
-import me.nereo.multi_image_selector.utils.TimeUtils;
+import me.nereo.multi_image_selector.utils.ScreenUtils;
 
 /**
  * 图片选择Fragment
@@ -49,7 +48,9 @@ import me.nereo.multi_image_selector.utils.TimeUtils;
  */
 public class MultiImageSelectorFragment extends Fragment {
 
-    private static final String TAG = "MultiImageSelector";
+    public static final String TAG = "me.nereo.multi_image_selector.MultiImageSelectorFragment";
+
+    private static final String KEY_TEMP_FILE = "key_temp_file";
 
     /** 最大图片选择次数，int类型 */
     public static final String EXTRA_SELECT_COUNT = "max_select_count";
@@ -84,8 +85,6 @@ public class MultiImageSelectorFragment extends Fragment {
 
     private ListPopupWindow mFolderPopupWindow;
 
-    // 时间线
-    private TextView mTimeLineText;
     // 类别
     private TextView mCategoryText;
     // 预览按钮
@@ -97,8 +96,6 @@ public class MultiImageSelectorFragment extends Fragment {
 
     private boolean hasFolderGened = false;
     private boolean mIsShowCamera = false;
-
-    private int mGridWidth, mGridHeight;
 
     private File mTmpFile;
 
@@ -137,15 +134,11 @@ public class MultiImageSelectorFragment extends Fragment {
 
         // 是否显示照相机
         mIsShowCamera = getArguments().getBoolean(EXTRA_SHOW_CAMERA, true);
-        mImageAdapter = new ImageGridAdapter(getActivity(), mIsShowCamera);
+        mImageAdapter = new ImageGridAdapter(getActivity(), mIsShowCamera, 3);
         // 是否显示选择指示器
         mImageAdapter.showSelectIndicator(mode == MODE_MULTI);
 
         mPopupAnchorView = view.findViewById(R.id.footer);
-
-        mTimeLineText = (TextView) view.findViewById(R.id.timeline_area);
-        // 初始化，先隐藏当前timeline
-        mTimeLineText.setVisibility(View.GONE);
 
         mCategoryText = (TextView) view.findViewById(R.id.category_btn);
         // 初始化，加载所有图片
@@ -155,7 +148,7 @@ public class MultiImageSelectorFragment extends Fragment {
             public void onClick(View view) {
 
                 if(mFolderPopupWindow == null){
-                    createPopupFolderList(mGridWidth, mGridHeight);
+                    createPopupFolderList();
                 }
 
                 if (mFolderPopupWindow.isShowing()) {
@@ -183,77 +176,39 @@ public class MultiImageSelectorFragment extends Fragment {
         });
 
         mGridView = (GridView) view.findViewById(R.id.grid);
+        mGridView.setAdapter(mImageAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mImageAdapter.isShowCamera()) {
+                    // 如果显示照相机，则第一个Grid显示为照相机，处理特殊逻辑
+                    if (i == 0) {
+                        showCameraAction();
+                    } else {
+                        // 正常操作
+                        Image image = (Image) adapterView.getAdapter().getItem(i);
+                        selectImageFromGrid(image, mode);
+                    }
+                } else {
+                    // 正常操作
+                    Image image = (Image) adapterView.getAdapter().getItem(i);
+                    selectImageFromGrid(image, mode);
+                }
+            }
+        });
         mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView absListView, int state) {
-
-                final Picasso picasso = Picasso.with(getActivity());
-                if(state == SCROLL_STATE_IDLE || state == SCROLL_STATE_TOUCH_SCROLL){
-                    picasso.resumeTag(getActivity());
-                }else{
-                    picasso.pauseTag(getActivity());
-                }
-
-                if(state == SCROLL_STATE_IDLE){
-                    // 停止滑动，日期指示器消失
-                    mTimeLineText.setVisibility(View.GONE);
-                }else if(state == SCROLL_STATE_FLING){
-                    mTimeLineText.setVisibility(View.VISIBLE);
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_FLING) {
+                    Picasso.with(view.getContext()).pauseTag(TAG);
+                } else {
+                    Picasso.with(view.getContext()).resumeTag(TAG);
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(mTimeLineText.getVisibility() == View.VISIBLE) {
-                    int index = firstVisibleItem + 1 == view.getAdapter().getCount() ? view.getAdapter().getCount() - 1 : firstVisibleItem + 1;
-                    Image image = (Image) view.getAdapter().getItem(index);
-                    if (image != null) {
-                        mTimeLineText.setText(TimeUtils.formatPhotoDate(image.path));
-                    }
-                }
-            }
-        });
-        mGridView.setAdapter(mImageAdapter);
-        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-            public void onGlobalLayout() {
 
-                final int width = mGridView.getWidth();
-                final int height = mGridView.getHeight();
-
-                mGridWidth = width;
-                mGridHeight = height;
-
-                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
-                final int numCount = width / desireSize;
-                final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
-                int columnWidth = (width - columnSpace*(numCount-1)) / numCount;
-                mImageAdapter.setItemSize(columnWidth);
-
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }else{
-                    mGridView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-            }
-        });
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(mImageAdapter.isShowCamera()){
-                    // 如果显示照相机，则第一个Grid显示为照相机，处理特殊逻辑
-                    if(i == 0){
-                        showCameraAction();
-                    }else{
-                        // 正常操作
-                        Image image = (Image) adapterView.getAdapter().getItem(i);
-                        selectImageFromGrid(image, mode);
-                    }
-                }else{
-                    // 正常操作
-                    Image image = (Image) adapterView.getAdapter().getItem(i);
-                    selectImageFromGrid(image, mode);
-                }
             }
         });
 
@@ -263,13 +218,16 @@ public class MultiImageSelectorFragment extends Fragment {
     /**
      * 创建弹出的ListView
      */
-    private void createPopupFolderList(int width, int height) {
+    private void createPopupFolderList() {
+        Point point = ScreenUtils.getScreenSize(getActivity());
+        int width = point.x;
+        int height = (int) (point.y * (4.5f/8.0f));
         mFolderPopupWindow = new ListPopupWindow(getActivity());
-        mFolderPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mFolderPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         mFolderPopupWindow.setAdapter(mFolderAdapter);
         mFolderPopupWindow.setContentWidth(width);
         mFolderPopupWindow.setWidth(width);
-        mFolderPopupWindow.setHeight(height * 5 / 8);
+        mFolderPopupWindow.setHeight(height);
         mFolderPopupWindow.setAnchorView(mPopupAnchorView);
         mFolderPopupWindow.setModal(true);
         mFolderPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -317,6 +275,20 @@ public class MultiImageSelectorFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_TEMP_FILE, mTmpFile);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            mTmpFile = (File) savedInstanceState.getSerializable(KEY_TEMP_FILE);
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // 首次加载所有图片
@@ -336,8 +308,11 @@ public class MultiImageSelectorFragment extends Fragment {
                     }
                 }
             }else{
-                if(mTmpFile != null && mTmpFile.exists()){
-                    mTmpFile.delete();
+                while (mTmpFile != null && mTmpFile.exists()){
+                    boolean success = mTmpFile.delete();
+                    if(success){
+                        mTmpFile = null;
+                    }
                 }
             }
         }
@@ -345,44 +320,12 @@ public class MultiImageSelectorFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.d(TAG, "on change");
-
         if(mFolderPopupWindow != null){
             if(mFolderPopupWindow.isShowing()){
                 mFolderPopupWindow.dismiss();
             }
         }
-
-        mGridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-            public void onGlobalLayout() {
-
-                final int height = mGridView.getHeight();
-
-                final int desireSize = getResources().getDimensionPixelOffset(R.dimen.image_size);
-                Log.d(TAG, "Desire Size = " + desireSize);
-                final int numCount = mGridView.getWidth() / desireSize;
-                Log.d(TAG, "Grid Size = " + mGridView.getWidth());
-                Log.d(TAG, "num count = " + numCount);
-                final int columnSpace = getResources().getDimensionPixelOffset(R.dimen.space_size);
-                int columnWidth = (mGridView.getWidth() - columnSpace * (numCount - 1)) / numCount;
-                mImageAdapter.setItemSize(columnWidth);
-
-                if (mFolderPopupWindow != null) {
-                    mFolderPopupWindow.setHeight(height * 5 / 8);
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    mGridView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
-            }
-        });
-
         super.onConfigurationChanged(newConfig);
-
     }
 
     /**
@@ -394,9 +337,17 @@ public class MultiImageSelectorFragment extends Fragment {
         if(cameraIntent.resolveActivity(getActivity().getPackageManager()) != null){
             // 设置系统相机拍照后的输出路径
             // 创建临时文件
-            mTmpFile = FileUtils.createTmpFile(getActivity());
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
-            startActivityForResult(cameraIntent, REQUEST_CAMERA);
+            try {
+                mTmpFile = FileUtils.createTmpFile(getActivity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(mTmpFile != null && mTmpFile.exists()) {
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
+                startActivityForResult(cameraIntent, REQUEST_CAMERA);
+            }else{
+                Toast.makeText(getActivity(), "图片错误", Toast.LENGTH_SHORT).show();
+            }
         }else{
             Toast.makeText(getActivity(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
         }
@@ -452,6 +403,8 @@ public class MultiImageSelectorFragment extends Fragment {
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.SIZE,
                 MediaStore.Images.Media._ID };
 
         @Override
@@ -459,47 +412,57 @@ public class MultiImageSelectorFragment extends Fragment {
             if(id == LOADER_ALL) {
                 CursorLoader cursorLoader = new CursorLoader(getActivity(),
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        null, null, IMAGE_PROJECTION[2] + " DESC");
+                        IMAGE_PROJECTION[4]+">0 AND "+IMAGE_PROJECTION[3]+"=? OR "+IMAGE_PROJECTION[3]+"=? ",
+                        new String[]{"image/jpeg", "image/png"}, IMAGE_PROJECTION[2] + " DESC");
                 return cursorLoader;
             }else if(id == LOADER_CATEGORY){
                 CursorLoader cursorLoader = new CursorLoader(getActivity(),
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-                        IMAGE_PROJECTION[0]+" like '%"+args.getString("path")+"%'", null, IMAGE_PROJECTION[2] + " DESC");
+                        IMAGE_PROJECTION[4]+">0 AND "+IMAGE_PROJECTION[0]+" like '%"+args.getString("path")+"%'",
+                        null, IMAGE_PROJECTION[2] + " DESC");
                 return cursorLoader;
             }
 
             return null;
         }
 
+        private boolean fileExist(String path){
+            if(!TextUtils.isEmpty(path)){
+                return new File(path).exists();
+            }
+            return false;
+        }
+
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (data != null) {
-                List<Image> images = new ArrayList<>();
-                int count = data.getCount();
-                if (count > 0) {
+                if (data.getCount() > 0) {
+                    List<Image> images = new ArrayList<>();
                     data.moveToFirst();
                     do{
                         String path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
                         String name = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
                         long dateTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
-                        Image image = new Image(path, name, dateTime);
-                        images.add(image);
+                        Image image = null;
+                        if (fileExist(path)) {
+                            image = new Image(path, name, dateTime);
+                            images.add(image);
+                        }
                         if( !hasFolderGened ) {
                             // 获取文件夹名称
-                            File imageFile = new File(path);
-                            File folderFile = imageFile.getParentFile();
-                            Folder folder = new Folder();
-                            folder.name = folderFile.getName();
-                            folder.path = folderFile.getAbsolutePath();
-                            folder.cover = image;
-                            if (!mResultFolder.contains(folder)) {
+                            File folderFile = new File(path).getParentFile();
+                            String fp = folderFile.getAbsolutePath();
+                            Folder f = getFolderByPath(fp);
+                            if(f == null){
+                                Folder folder = new Folder();
+                                folder.name = folderFile.getName();
+                                folder.path = fp;
+                                folder.cover = image;
                                 List<Image> imageList = new ArrayList<>();
                                 imageList.add(image);
                                 folder.images = imageList;
                                 mResultFolder.add(folder);
-                            } else {
-                                // 更新
-                                Folder f = mResultFolder.get(mResultFolder.indexOf(folder));
+                            }else {
                                 f.images.add(image);
                             }
                         }
@@ -507,14 +470,15 @@ public class MultiImageSelectorFragment extends Fragment {
                     }while(data.moveToNext());
 
                     mImageAdapter.setData(images);
-
                     // 设定默认选择
                     if(resultList != null && resultList.size()>0){
                         mImageAdapter.setDefaultSelected(resultList);
                     }
 
-                    mFolderAdapter.setData(mResultFolder);
-                    hasFolderGened = true;
+                    if(!hasFolderGened) {
+                        mFolderAdapter.setData(mResultFolder);
+                        hasFolderGened = true;
+                    }
 
                 }
             }
@@ -525,6 +489,17 @@ public class MultiImageSelectorFragment extends Fragment {
 
         }
     };
+
+    private Folder getFolderByPath(String path){
+        if(mResultFolder != null){
+            for (Folder folder : mResultFolder) {
+                if(TextUtils.equals(folder.path, path)){
+                    return folder;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * 回调接口

@@ -20,6 +20,7 @@ import me.nereo.multi_image_selector.bean.Folder;
 /**
  * 文件夹Adapter
  * Created by Nereo on 2015/4/7.
+ * Updated by nereo on 2016/1/19.
  */
 public class FolderAdapter extends BaseAdapter {
 
@@ -78,14 +79,16 @@ public class FolderAdapter extends BaseAdapter {
         }
         if (holder != null) {
             if(i == 0){
-                holder.name.setText("所有图片");
-                holder.size.setText(getTotalImageSize()+"张");
+                holder.name.setText(R.string.folder_all);
+                holder.path.setText("/sdcard");
+                holder.size.setText(String.format("%d%s",
+                        getTotalImageSize(), mContext.getResources().getString(R.string.photo_unit)));
                 if(mFolders.size()>0){
                     Folder f = mFolders.get(0);
                     Picasso.with(mContext)
                             .load(new File(f.cover.path))
                             .error(R.drawable.default_error)
-                            .resize(mImageSize, mImageSize)
+                            .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
                             .centerCrop()
                             .into(holder.cover);
                 }
@@ -125,27 +128,36 @@ public class FolderAdapter extends BaseAdapter {
     class ViewHolder{
         ImageView cover;
         TextView name;
+        TextView path;
         TextView size;
         ImageView indicator;
         ViewHolder(View view){
             cover = (ImageView)view.findViewById(R.id.cover);
             name = (TextView) view.findViewById(R.id.name);
+            path = (TextView) view.findViewById(R.id.path);
             size = (TextView) view.findViewById(R.id.size);
             indicator = (ImageView) view.findViewById(R.id.indicator);
             view.setTag(this);
         }
 
         void bindData(Folder data) {
+            if(data == null){
+                return;
+            }
             name.setText(data.name);
-            size.setText(data.images.size()+"张");
+            path.setText(data.path);
+            if (data.images != null) {
+                size.setText(String.format("%d%s", data.images.size(), mContext.getResources().getString(R.string.photo_unit)));
+            }else{
+                size.setText("*"+mContext.getResources().getString(R.string.photo_unit));
+            }
             // 显示图片
             Picasso.with(mContext)
                     .load(new File(data.cover.path))
                     .placeholder(R.drawable.default_error)
-                    .resize(mImageSize, mImageSize)
+                    .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
                     .centerCrop()
                     .into(cover);
-            // TODO 选择标识
         }
     }
 

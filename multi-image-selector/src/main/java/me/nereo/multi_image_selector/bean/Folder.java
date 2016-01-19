@@ -1,5 +1,7 @@
 package me.nereo.multi_image_selector.bean;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ public class Folder {
     public boolean equals(Object o) {
         try {
             Folder other = (Folder) o;
-            return this.path.equalsIgnoreCase(other.path);
+            return TextUtils.equals(other.path, path);
         }catch (ClassCastException e){
             e.printStackTrace();
         }
