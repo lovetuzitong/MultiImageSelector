@@ -451,19 +451,21 @@ public class MultiImageSelectorFragment extends Fragment {
                         if( !hasFolderGened ) {
                             // 获取文件夹名称
                             File folderFile = new File(path).getParentFile();
-                            String fp = folderFile.getAbsolutePath();
-                            Folder f = getFolderByPath(fp);
-                            if(f == null){
-                                Folder folder = new Folder();
-                                folder.name = folderFile.getName();
-                                folder.path = fp;
-                                folder.cover = image;
-                                List<Image> imageList = new ArrayList<>();
-                                imageList.add(image);
-                                folder.images = imageList;
-                                mResultFolder.add(folder);
-                            }else {
-                                f.images.add(image);
+                            if(folderFile != null && folderFile.exists()){
+                                String fp = folderFile.getAbsolutePath();
+                                Folder f = getFolderByPath(fp);
+                                if(f == null){
+                                    Folder folder = new Folder();
+                                    folder.name = folderFile.getName();
+                                    folder.path = fp;
+                                    folder.cover = image;
+                                    List<Image> imageList = new ArrayList<>();
+                                    imageList.add(image);
+                                    folder.images = imageList;
+                                    mResultFolder.add(folder);
+                                }else {
+                                    f.images.add(image);
+                                }
                             }
                         }
 

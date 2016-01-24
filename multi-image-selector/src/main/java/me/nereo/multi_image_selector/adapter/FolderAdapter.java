@@ -152,12 +152,16 @@ public class FolderAdapter extends BaseAdapter {
                 size.setText("*"+mContext.getResources().getString(R.string.photo_unit));
             }
             // 显示图片
-            Picasso.with(mContext)
-                    .load(new File(data.cover.path))
-                    .placeholder(R.drawable.default_error)
-                    .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
-                    .centerCrop()
-                    .into(cover);
+            if (data.cover != null) {
+                Picasso.with(mContext)
+                        .load(new File(data.cover.path))
+                        .placeholder(R.drawable.default_error)
+                        .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
+                        .centerCrop()
+                        .into(cover);
+            }else{
+                cover.setImageResource(R.drawable.default_error);
+            }
         }
     }
 

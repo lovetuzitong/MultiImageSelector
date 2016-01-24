@@ -220,14 +220,18 @@ public class ImageGridAdapter extends BaseAdapter {
                 indicator.setVisibility(View.GONE);
             }
             File imageFile = new File(data.path);
-            // 显示图片
-            Picasso.with(mContext)
-                    .load(imageFile)
-                    .placeholder(R.drawable.default_error)
-                    .tag(MultiImageSelectorFragment.TAG)
-                    .resize(mGridWidth, mGridWidth)
-                    .centerCrop()
-                    .into(image);
+            if (imageFile.exists()) {
+                // 显示图片
+                Picasso.with(mContext)
+                        .load(imageFile)
+                        .placeholder(R.drawable.default_error)
+                        .tag(MultiImageSelectorFragment.TAG)
+                        .resize(mGridWidth, mGridWidth)
+                        .centerCrop()
+                        .into(image);
+            }else{
+                image.setImageResource(R.drawable.default_error);
+            }
         }
     }
 
