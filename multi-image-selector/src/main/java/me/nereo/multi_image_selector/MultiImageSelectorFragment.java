@@ -73,8 +73,6 @@ public class MultiImageSelectorFragment extends Fragment {
     public static final String EXTRA_SELECT_MODE = "select_count_mode";
     /** Whether show camera，true by default */
     public static final String EXTRA_SHOW_CAMERA = "show_camera";
-    /** Result data set，ArrayList&lt;String&gt;*/
-    public static final String EXTRA_RESULT = "select_result";
     /** Original data set */
     public static final String EXTRA_DEFAULT_SELECTED_LIST = "default_list";
 
@@ -98,10 +96,7 @@ public class MultiImageSelectorFragment extends Fragment {
     private TextView mCategoryText;
     private View mPopupAnchorView;
 
-    private int mDesireImageCount;
-
     private boolean hasFolderGened = false;
-    private boolean mIsShowCamera = false;
 
     private File mTmpFile;
 
@@ -124,19 +119,14 @@ public class MultiImageSelectorFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mDesireImageCount = getArguments().getInt(EXTRA_SELECT_COUNT);
-
-        final int mode = getArguments().getInt(EXTRA_SELECT_MODE);
-
+        final int mode = selectMode();
         if(mode == MODE_MULTI) {
             ArrayList<String> tmp = getArguments().getStringArrayList(EXTRA_DEFAULT_SELECTED_LIST);
             if(tmp != null && tmp.size()>0) {
                 resultList = tmp;
             }
         }
-
-        mIsShowCamera = getArguments().getBoolean(EXTRA_SHOW_CAMERA, true);
-        mImageAdapter = new ImageGridAdapter(getActivity(), mIsShowCamera, 3);
+        mImageAdapter = new ImageGridAdapter(getActivity(), showCamera(), 3);
         mImageAdapter.showSelectIndicator(mode == MODE_MULTI);
 
         mPopupAnchorView = view.findViewById(R.id.footer);
@@ -231,7 +221,7 @@ public class MultiImageSelectorFragment extends Fragment {
                         if (index == 0) {
                             getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
                             mCategoryText.setText(R.string.folder_all);
-                            if (mIsShowCamera) {
+                            if (showCamera()) {
                                 mImageAdapter.setShowCamera(true);
                             } else {
                                 mImageAdapter.setShowCamera(false);
@@ -288,6 +278,7 @@ public class MultiImageSelectorFragment extends Fragment {
                     }
                 }
             }else{
+                // delete tmp file
                 while (mTmpFile != null && mTmpFile.exists()){
                     boolean success = mTmpFile.delete();
                     if(success){
@@ -379,7 +370,7 @@ public class MultiImageSelectorFragment extends Fragment {
                         mCallback.onImageUnselected(image.path);
                     }
                 } else {
-                    if(mDesireImageCount == resultList.size()){
+                    if(selectImageCount() == resultList.size()){
                         Toast.makeText(getActivity(), R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -496,6 +487,18 @@ public class MultiImageSelectorFragment extends Fragment {
             }
         }
         return null;
+    }
+
+    private boolean showCamera(){
+        return getArguments() == null || getArguments().getBoolean(EXTRA_SHOW_CAMERA, true);
+    }
+
+    private int selectMode(){
+        return getArguments() == null ? MODE_MULTI : getArguments().getInt(EXTRA_SELECT_MODE);
+    }
+
+    private int selectImageCount(){
+        return getArguments() == null ? 9 : getArguments().getInt(EXTRA_SELECT_COUNT);
     }
 
     /**
