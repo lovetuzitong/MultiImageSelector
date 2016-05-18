@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">多图选择器</string>
     <string name="folder_all">所有照片</string>
     <string name="preview">预览</string>
     <string name="msg_no_camera">没有系统相机</string>
