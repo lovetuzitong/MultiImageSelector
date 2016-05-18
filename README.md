@@ -133,6 +133,10 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 
 ###Change Log
 
+* 2016-5-18
+    1. Added. Convenient way to call image selector. See `Step 2`
+    2. Fixed. Some NPE.
+
 * 2016-1-19
     1. Fixed. cannot load some 0-size image
     2. Added. When take a new photo, notify media scanner

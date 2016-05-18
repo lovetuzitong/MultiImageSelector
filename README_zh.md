@@ -133,6 +133,10 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 
 ###更新日志
 
+* 2016-5-18
+    1. 新增. 简单的调用方式. 详细参见 `第2步`
+    2. Fixed. 修复某些情况下碰到的空指针异常.
+
 * 2016-1-19
     1. 修复. 无法加载大小为0的图片
     2. 新增. 拍照后通知媒体扫描,加入图库
