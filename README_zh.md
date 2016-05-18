@@ -48,7 +48,7 @@ dependencies {
 ``` java
 // Multi image selector form an Activity
 MultiImageSelector.create(Context)
-        .start(Activity, REQUEST_CODE);
+        .start(Activity, REQUEST_IMAGE);
 ```
 
 详细可使用的Api.
@@ -59,7 +59,7 @@ MultiImageSelector.create(Context)
         .single() // 单选模式
         .multi() // 多选模式, 默认模式;
         .origin(ArrayList<String>) // 默认已选择图片. 只有在选择模式为多选时有效
-        .start(Activity/Fragment, REQUEST_CODE);
+        .start(Activity/Fragment, REQUEST_IMAGE);
 ```
 
 同样支持老版本的 `Intent` 调用方法:

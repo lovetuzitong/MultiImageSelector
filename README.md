@@ -48,7 +48,7 @@ Call image selector simplest in your code, eg. ( From `version-1.1` )
 ``` java
 // Multi image selector form an Activity
 MultiImageSelector.create(Context)
-        .start(Activity, REQUEST_CODE);
+        .start(Activity, REQUEST_IMAGE);
 ```
 
 Detail Api.
@@ -59,7 +59,7 @@ MultiImageSelector.create(Context)
         .single() // single mode
         .multi() // multi mode, default mode;
         .origin(ArrayList<String>) // original select data set, used width #.multi()
-        .start(Activity/Fragment, REQUEST_CODE);
+        .start(Activity/Fragment, REQUEST_IMAGE);
 ```
 
 Also support traditional `Intent` :
