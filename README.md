@@ -14,12 +14,19 @@ Image selector for Android device. Support single choice and multi-choice.
 
 ###Quick Start
 * Step 0
-Add module `multi-image-selector` as your dependence.
+Add module `multi-image-selector` as your dependence. in your `build.gradle` :
+```java
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.lovetuzitong:MultiImageSelector:1.1'
+}
+```
 
 * Step 1 
-Declare  permission `android.permission.READ_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
-Declare  permission `android.permission.WRITE_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
-Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
+Set your `AndroidManifest.xml` as below:
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -134,8 +141,9 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 ###Change Log
 
 * 2016-5-18
-    1. Added. Convenient way to call image selector. See `Step 2`
-    2. Fixed. Some NPE.
+    1. Added. `JitPack` support
+    2. Added. Convenient way to call image selector. See `Step 2`
+    3. Fixed. Some NPE.
 
 * 2016-1-19
     1. Fixed. cannot load some 0-size image

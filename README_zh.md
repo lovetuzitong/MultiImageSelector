@@ -14,12 +14,19 @@
 
 ###快速开始
 * 第0步
-把模块 `multi-image-selector` 作为你的项目依赖添加到工程中.
+把模块 `multi-image-selector` 作为你的项目依赖添加到工程中. 在项目`build.gradle` 中:
+```java
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile 'com.github.lovetuzitong:MultiImageSelector:1.1'
+}
+```
 
 * 第1步 
-在你的 `AndroidManifest.xml` 文件中添加权限 `android.permission.READ_EXTERNAL_STORAGE`.
-在你的 `AndroidManifest.xml` 文件中添加权限 `android.permission.WRITE_EXTERNAL_STORAGE`.
-别忘了同时在 `AndroidManifest.xml` 中声明 `MultiImageSelectorActivity` 这个Activity.
+在你的 `AndroidManifest.xml` 中做如下声明:
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -134,8 +141,9 @@ class CustomerActivity extends Activity implements MultiImageSelectorFragment.Ca
 ###更新日志
 
 * 2016-5-18
-    1. 新增. 简单的调用方式. 详细参见 `第2步`
-    2. Fixed. 修复某些情况下碰到的空指针异常.
+    1. 新增. `JitPack` 支持
+    2. 新增. 简单的调用方式. 详细参见 `第2步`
+    3. Fixed. 修复某些情况下碰到的空指针异常.
 
 * 2016-1-19
     1. 修复. 无法加载大小为0的图片
