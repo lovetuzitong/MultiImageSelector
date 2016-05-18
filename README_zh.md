@@ -21,9 +21,18 @@
 在你的 `AndroidManifest.xml` 文件中添加权限 `android.permission.WRITE_EXTERNAL_STORAGE`.
 别忘了同时在 `AndroidManifest.xml` 中声明 `MultiImageSelectorActivity` 这个Activity.
 ```xml
-<activity
-    android:configChanges="orientation|screenSize"
-    android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+<application
+
+    ...
+
+    <!--Image Selector Entry-->
+    <activity
+        android:configChanges="orientation|screenSize"
+        android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+</application>
 ```
 
 * 第2步

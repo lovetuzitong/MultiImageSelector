@@ -21,9 +21,18 @@ Declare  permission `android.permission.READ_EXTERNAL_STORAGE` in your `AndroidM
 Declare  permission `android.permission.WRITE_EXTERNAL_STORAGE` in your `AndroidManifest.xml` .
 Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
 ```xml
-<activity
-    android:configChanges="orientation|screenSize"
-    android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+<application
+
+    ...
+
+    <!--Image Selector Entry-->
+    <activity
+        android:configChanges="orientation|screenSize"
+        android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
+</application>
 ```
 
 * Step 2
