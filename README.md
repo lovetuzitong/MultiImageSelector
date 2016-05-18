@@ -27,7 +27,26 @@ Declare `MultiImageSelectorActivity` in your `AndroidManifest.xml` .
 ```
 
 * Step 2
-Call image selector activity in your code, eg.
+Call image selector simplest in your code, eg. ( From `version-1.1` )
+
+``` java
+// Multi image selector form an Activity
+MultiImageSelector.create(Context)
+        .start(Activity, REQUEST_CODE);
+```
+
+Detail Api.
+``` java
+MultiImageSelector.create(Context)
+        .showCamera(boolean) // show camera or not. true by default
+        .count(int) // max select image size, 9 by default. used width #.multi()
+        .single() // single mode
+        .multi() // multi mode, default mode;
+        .origin(ArrayList<String>) // original select data set, used width #.multi()
+        .start(Activity/Fragment, REQUEST_CODE);
+```
+
+Also support traditional `Intent` :
 ``` java
 Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
 // whether show camera
