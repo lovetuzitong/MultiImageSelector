@@ -5,4 +5,8 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="NO_ACTION_BAR" parent="Theme.AppCompat.Light.NoActionBar">
+
+    </style>
+
 </resources>

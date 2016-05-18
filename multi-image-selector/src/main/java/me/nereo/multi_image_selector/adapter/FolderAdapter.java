@@ -85,12 +85,16 @@ public class FolderAdapter extends BaseAdapter {
                         getTotalImageSize(), mContext.getResources().getString(R.string.photo_unit)));
                 if(mFolders.size()>0){
                     Folder f = mFolders.get(0);
-                    Picasso.with(mContext)
-                            .load(new File(f.cover.path))
-                            .error(R.drawable.default_error)
-                            .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
-                            .centerCrop()
-                            .into(holder.cover);
+                    if (f != null) {
+                        Picasso.with(mContext)
+                                .load(new File(f.cover.path))
+                                .error(R.drawable.default_error)
+                                .resizeDimen(R.dimen.folder_cover_size, R.dimen.folder_cover_size)
+                                .centerCrop()
+                                .into(holder.cover);
+                    }else{
+                        holder.cover.setImageResource(R.drawable.default_error);
+                    }
                 }
             }else {
                 holder.bindData(getItem(i));
@@ -151,8 +155,8 @@ public class FolderAdapter extends BaseAdapter {
             }else{
                 size.setText("*"+mContext.getResources().getString(R.string.photo_unit));
             }
-            // 显示图片
             if (data.cover != null) {
+                // 显示图片
                 Picasso.with(mContext)
                         .load(new File(data.cover.path))
                         .placeholder(R.drawable.default_error)

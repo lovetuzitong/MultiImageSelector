@@ -1,10 +1,16 @@
 package me.nereo.multiimageselector;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,14 +19,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import me.nereo.multi_image_selector.MultiImageSelectorActivity;
+import me.nereo.multi_image_selector.MultiImageSelector;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE = 2;
+    protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+    protected static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
 
     private TextView mResultText;
     private RadioGroup mChoiceMode, mShowCamera;
@@ -50,48 +57,76 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                int selectedMode = MultiImageSelectorActivity.MODE_MULTI;
-
-                if(mChoiceMode.getCheckedRadioButtonId() == R.id.single){
-                    selectedMode = MultiImageSelectorActivity.MODE_SINGLE;
-                }else{
-                    selectedMode = MultiImageSelectorActivity.MODE_MULTI;
+        View button = findViewById(R.id.button);
+        if (button != null) {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pickImage();
                 }
+            });
+        }
 
-                boolean showCamera = mShowCamera.getCheckedRadioButtonId() == R.id.show;
+    }
 
-                int maxNum = 9;
-                if(!TextUtils.isEmpty(mRequestNum.getText())){
+    private void pickImage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN // Permission was added in API Level 16
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    getString(R.string.permission_rationale),
+                    REQUEST_STORAGE_READ_ACCESS_PERMISSION);
+        }else {
+            boolean showCamera = mShowCamera.getCheckedRadioButtonId() == R.id.show;
+            int maxNum = 9;
+
+            if (!TextUtils.isEmpty(mRequestNum.getText())) {
+                try {
                     maxNum = Integer.valueOf(mRequestNum.getText().toString());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-
-                Intent intent = new Intent(MainActivity.this, MultiImageSelectorActivity.class);
-                // 是否显示拍摄图片
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, showCamera);
-                // 最大可选择图片数量
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxNum);
-                // 选择模式
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, selectedMode);
-                // 默认选择
-                if(mSelectPath != null && mSelectPath.size()>0){
-                    intent.putExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, mSelectPath);
-                }
-                startActivityForResult(intent, REQUEST_IMAGE);
-
             }
-        });
-
-/*        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, GestureImageActivity.class);
-                startActivity(intent);
+            MultiImageSelector selector = MultiImageSelector.create(MainActivity.this);
+            selector.showCamera(showCamera);
+            selector.count(maxNum);
+            if (mChoiceMode.getCheckedRadioButtonId() == R.id.single) {
+                selector.single();
+            } else {
+                selector.multi();
             }
-        });*/
+            selector.origin(mSelectPath);
+            selector.start(MainActivity.this, REQUEST_IMAGE);
+        }
+    }
+
+    private void requestPermission(final String permission, String rationale, final int requestCode){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.permission_dialog_title)
+                    .setMessage(rationale)
+                    .setPositiveButton(R.string.permission_dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+                        }
+                    })
+                    .setNegativeButton(R.string.permission_dialog_cancel, null)
+                    .create().show();
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_STORAGE_READ_ACCESS_PERMISSION){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                pickImage();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
@@ -99,7 +134,7 @@ public class MainActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_IMAGE){
             if(resultCode == RESULT_OK){
-                mSelectPath = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                mSelectPath = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
                 StringBuilder sb = new StringBuilder();
                 for(String p: mSelectPath){
                     sb.append(p);

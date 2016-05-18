@@ -42,29 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 
-        <View
-            android:visibility="gone"
-            android:layout_toLeftOf="@+id/preview"
-            android:layout_width="1dp"
-            android:background="#8828292A"
-            android:layout_height="match_parent" />
-
-        <Button
-            android:visibility="gone"
-            android:id="@+id/preview"
-            tools:text="预览(1)"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:minHeight="1dp"
-            android:minWidth="1dp"
-            android:background="@null"
-            android:textColor="@color/default_text_color"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-
         </RelativeLayout>
 
 </RelativeLayout>

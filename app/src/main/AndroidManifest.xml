@@ -24,8 +24,6 @@
             android:configChanges="orientation|screenSize"
             android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
 
-        <activity android:name=".GestureImageActivity" />
-
     </application>
 
 </manifest>

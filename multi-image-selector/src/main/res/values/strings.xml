@@ -5,6 +5,14 @@
     <string name="msg_no_camera">No system camera found</string>
     <string name="msg_amount_limit">Select images amount is limit</string>
     <string name="action_done">Done</string>
+    <string name="action_button_string">%1$s(%2$d/%3$d)</string>
     <string name="photo_unit">Shot</string>
     <string name="tip_take_photo">Take photo</string>
+    <string name="error_image_not_exist">Image error</string>
+    <string name="error_no_permission">Has no permission</string>
+    <string name="permission_dialog_title">Permission Deny</string>
+    <string name="permission_dialog_ok">OK</string>
+    <string name="permission_dialog_cancel">CANCEL</string>
+    <string name="permission_rationale">Storage read permission is needed to pick files.</string>
+    <string name="permission_rationale_write_storage">Storage write permission is needed to save the image.</string>
 </resources>

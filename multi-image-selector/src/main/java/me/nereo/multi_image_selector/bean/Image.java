@@ -1,5 +1,7 @@
 package me.nereo.multi_image_selector.bean;
 
+import android.text.TextUtils;
+
 /**
  * 图片实体
  * Created by Nereo on 2015/4/7.
@@ -19,7 +21,7 @@ public class Image {
     public boolean equals(Object o) {
         try {
             Image other = (Image) o;
-            return this.path.equalsIgnoreCase(other.path);
+            return TextUtils.equals(this.path, other.path);
         }catch (ClassCastException e){
             e.printStackTrace();
         }
