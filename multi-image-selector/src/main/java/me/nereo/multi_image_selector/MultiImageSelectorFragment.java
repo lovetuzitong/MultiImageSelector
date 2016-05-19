@@ -432,12 +432,13 @@ public class MultiImageSelectorFragment extends Fragment {
                         String path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]));
                         String name = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]));
                         long dateTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]));
+                        if(!fileExist(path)){continue;}
                         Image image = null;
-                        if (fileExist(path) && !TextUtils.isEmpty(name)) {
+                        if (!TextUtils.isEmpty(name)) {
                             image = new Image(path, name, dateTime);
                             images.add(image);
                         }
-                        if( !hasFolderGened && fileExist(path)) {
+                        if( !hasFolderGened ) {
                             // get all folder data
                             File folderFile = new File(path).getParentFile();
                             if(folderFile != null && folderFile.exists()){
