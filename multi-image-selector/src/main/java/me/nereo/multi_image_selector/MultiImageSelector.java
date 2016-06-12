@@ -25,15 +25,25 @@ public class MultiImageSelector {
     private int mMode = MultiImageSelectorActivity.MODE_MULTI;
     private ArrayList<String> mOriginData;
     private static MultiImageSelector sSelector;
-    private Context mContext;
 
+    @Deprecated
     private MultiImageSelector(Context context){
-        mContext = context;
+
     }
 
+    private MultiImageSelector(){}
+
+    @Deprecated
     public static MultiImageSelector create(Context context){
         if(sSelector == null){
             sSelector = new MultiImageSelector(context);
+        }
+        return sSelector;
+    }
+
+    public static MultiImageSelector create(){
+        if(sSelector == null){
+            sSelector = new MultiImageSelector();
         }
         return sSelector;
     }
@@ -64,32 +74,34 @@ public class MultiImageSelector {
     }
 
     public void start(Activity activity, int requestCode){
-        if(hasPermission()) {
-            activity.startActivityForResult(createIntent(), requestCode);
+        final Context context = activity;
+        if(hasPermission(context)) {
+            activity.startActivityForResult(createIntent(context), requestCode);
         }else{
-            Toast.makeText(mContext, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
         }
     }
 
     public void start(Fragment fragment, int requestCode){
-        if(hasPermission()) {
-            fragment.startActivityForResult(createIntent(), requestCode);
+        final Context context = fragment.getContext();
+        if(hasPermission(context)) {
+            fragment.startActivityForResult(createIntent(context), requestCode);
         }else{
-            Toast.makeText(mContext, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean hasPermission(){
+    private boolean hasPermission(Context context){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             // Permission was added in API Level 16
-            return ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED;
         }
         return true;
     }
 
-    private Intent createIntent(){
-        Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
+    private Intent createIntent(Context context){
+        Intent intent = new Intent(context, MultiImageSelectorActivity.class);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, mShowCamera);
         intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, mMaxCount);
         if(mOriginData != null){
