@@ -112,7 +112,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_multi_image, container, false);
+        return inflater.inflate(R.layout.mis_fragment_multi_image, container, false);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class MultiImageSelectorFragment extends Fragment {
         mPopupAnchorView = view.findViewById(R.id.footer);
 
         mCategoryText = (TextView) view.findViewById(R.id.category_btn);
-        mCategoryText.setText(R.string.folder_all);
+        mCategoryText.setText(R.string.mis_folder_all);
         mCategoryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -220,7 +220,7 @@ public class MultiImageSelectorFragment extends Fragment {
 
                         if (index == 0) {
                             getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
-                            mCategoryText.setText(R.string.folder_all);
+                            mCategoryText.setText(R.string.mis_folder_all);
                             if (showCamera()) {
                                 mImageAdapter.setShowCamera(true);
                             } else {
@@ -306,7 +306,7 @@ public class MultiImageSelectorFragment extends Fragment {
         if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED){
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    getString(R.string.permission_rationale_write_storage),
+                    getString(R.string.mis_permission_rationale_write_storage),
                     REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
         }else {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -320,10 +320,10 @@ public class MultiImageSelectorFragment extends Fragment {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
                     startActivityForResult(intent, REQUEST_CAMERA);
                 } else {
-                    Toast.makeText(getActivity(), R.string.error_image_not_exist, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.mis_error_image_not_exist, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(getActivity(), R.string.msg_no_camera, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.mis_msg_no_camera, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -331,15 +331,15 @@ public class MultiImageSelectorFragment extends Fragment {
     private void requestPermission(final String permission, String rationale, final int requestCode){
         if(shouldShowRequestPermissionRationale(permission)){
             new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.permission_dialog_title)
+                    .setTitle(R.string.mis_permission_dialog_title)
                     .setMessage(rationale)
-                    .setPositiveButton(R.string.permission_dialog_ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             requestPermissions(new String[]{permission}, requestCode);
                         }
                     })
-                    .setNegativeButton(R.string.permission_dialog_cancel, null)
+                    .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
                     .create().show();
         }else{
             requestPermissions(new String[]{permission}, requestCode);
@@ -371,7 +371,7 @@ public class MultiImageSelectorFragment extends Fragment {
                     }
                 } else {
                     if(selectImageCount() == resultList.size()){
-                        Toast.makeText(getActivity(), R.string.msg_amount_limit, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.mis_msg_amount_limit, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     resultList.add(image.path);

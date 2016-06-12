@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="mis_actionbar_color">#21282C</color>
+    <public name="mis_asv" type="drawable" />
 </resources>

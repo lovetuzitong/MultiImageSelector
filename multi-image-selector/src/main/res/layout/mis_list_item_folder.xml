@@ -12,12 +12,12 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:id="@+id/cover"
-        tools:src="@drawable/btn_back"
+        tools:src="@drawable/mis_btn_back"
         android:layout_gravity="center_vertical"
         android:scaleType="centerInside"
-        android:src="@drawable/default_error"
-        android:layout_width="@dimen/folder_cover_size"
-        android:layout_height="@dimen/folder_cover_size" />
+        android:src="@drawable/mis_default_error"
+        android:layout_width="@dimen/mis_folder_cover_size"
+        android:layout_height="@dimen/mis_folder_cover_size" />
 
     <LinearLayout
         android:layout_toRightOf="@+id/cover"
@@ -66,7 +66,7 @@
         android:id="@+id/indicator"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="20dp"
-        android:src="@drawable/default_check"
+        android:src="@drawable/mis_default_check"
         android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

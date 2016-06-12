@@ -5,7 +5,7 @@
     <me.nereo.multi_image_selector.view.SquaredImageView
         android:id="@+id/image"
         android:scaleType="centerInside"
-        android:src="@drawable/default_error"
+        android:src="@drawable/mis_default_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -23,6 +23,6 @@
         android:layout_marginRight="5.5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/btn_unselected"/>
+        android:src="@drawable/mis_btn_unselected"/>
 
 </me.nereo.multi_image_selector.view.SquareFrameLayout>

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
-                    getString(R.string.permission_rationale),
+                    getString(R.string.mis_permission_rationale),
                     REQUEST_STORAGE_READ_ACCESS_PERMISSION);
         }else {
             boolean showCamera = mShowCamera.getCheckedRadioButtonId() == R.id.show;
@@ -103,15 +103,15 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermission(final String permission, String rationale, final int requestCode){
         if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.permission_dialog_title)
+                    .setTitle(R.string.mis_permission_dialog_title)
                     .setMessage(rationale)
-                    .setPositiveButton(R.string.permission_dialog_ok, new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.mis_permission_dialog_ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
                         }
                     })
-                    .setNegativeButton(R.string.permission_dialog_cancel, null)
+                    .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
                     .create().show();
         }else{
             ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);

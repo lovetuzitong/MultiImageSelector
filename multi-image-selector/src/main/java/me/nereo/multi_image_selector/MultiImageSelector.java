@@ -67,7 +67,7 @@ public class MultiImageSelector {
         if(hasPermission()) {
             activity.startActivityForResult(createIntent(), requestCode);
         }else{
-            Toast.makeText(mContext, R.string.error_no_permission, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -75,7 +75,7 @@ public class MultiImageSelector {
         if(hasPermission()) {
             fragment.startActivityForResult(createIntent(), requestCode);
         }else{
-            Toast.makeText(mContext, R.string.error_no_permission, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.mis_error_no_permission, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -50,8 +50,8 @@ public class MultiImageSelectorActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(R.style.NO_ACTIONBAR);
-        setContentView(R.layout.activity_default);
+        setTheme(R.style.MIS_NO_ACTIONBAR);
+        setContentView(R.layout.mis_activity_default);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.BLACK);
@@ -129,14 +129,14 @@ public class MultiImageSelectorActivity extends AppCompatActivity
     private void updateDoneText(ArrayList<String> resultList){
         int size = 0;
         if(resultList == null || resultList.size()<=0){
-            mSubmitButton.setText(R.string.action_done);
+            mSubmitButton.setText(R.string.mis_action_done);
             mSubmitButton.setEnabled(false);
         }else{
             size = resultList.size();
             mSubmitButton.setEnabled(true);
         }
-        mSubmitButton.setText(getString(R.string.action_button_string,
-                getString(R.string.action_done), size, mDefaultCount));
+        mSubmitButton.setText(getString(R.string.mis_action_button_string,
+                getString(R.string.mis_action_done), size, mDefaultCount));
     }
 
     @Override

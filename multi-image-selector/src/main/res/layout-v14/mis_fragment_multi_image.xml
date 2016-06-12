@@ -9,12 +9,12 @@
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:horizontalSpacing="@dimen/space_size"
-        android:verticalSpacing="@dimen/space_size"
+        android:horizontalSpacing="@dimen/mis_space_size"
+        android:verticalSpacing="@dimen/mis_space_size"
         android:paddingBottom="?android:attr/actionBarSize"
         android:clipToPadding="false"
         android:numColumns="auto_fit"
-    android:columnWidth="@dimen/image_size"/>
+    android:columnWidth="@dimen/mis_image_size"/>
 
     <RelativeLayout
         android:clickable="true"
@@ -29,11 +29,11 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_centerVertical="true"
-            android:textColor="@color/folder_text_color"
+            android:textColor="@color/mis_folder_text_color"
             tools:text="所有图片"
             android:textSize="16sp"
             android:gravity="center_vertical"
-            android:drawableRight="@drawable/text_indicator"
+            android:drawableRight="@drawable/mis_text_indicator"
             android:drawablePadding="5dp"
             android:background="@null"
             android:singleLine="true"
