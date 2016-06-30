@@ -1,6 +1,8 @@
 # MultiImageSelector
 仿微信实现多图选择。支持单选和多选两种模式
 
+[![](https://jitpack.io/v/lovetuzitong/MultiImageSelector.svg)](https://jitpack.io/#lovetuzitong/MultiImageSelector)
+
 [English Doc](README.md)
 
 ###截图
@@ -21,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.lovetuzitong:MultiImageSelector:1.1'
+    compile 'com.github.lovetuzitong:MultiImageSelector:1.2'
 }
 ```
 

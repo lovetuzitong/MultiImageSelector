@@ -1,6 +1,8 @@
 # MultiImageSelector
 Image selector for Android device. Support single choice and multi-choice.
 
+[![](https://jitpack.io/v/lovetuzitong/MultiImageSelector.svg)](https://jitpack.io/#lovetuzitong/MultiImageSelector)
+
 [中文文档](README_zh.md)
 
 ###ART
@@ -21,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.lovetuzitong:MultiImageSelector:1.1'
+    compile 'com.github.lovetuzitong:MultiImageSelector:1.2'
 }
 ```
 
